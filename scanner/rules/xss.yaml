@@ -1,0 +1,14 @@
+rules:
+  - id: vulnai.javascript.xss-innerhtml
+    languages: [javascript, typescript]
+    severity: WARNING
+    message: Untrusted data may be written to an HTML parsing sink. Prefer textContent or sanitize for the output context.
+    patterns:
+      - pattern-either:
+          - pattern: $EL.innerHTML = $INPUT
+          - pattern: $EL.outerHTML = $INPUT
+          - pattern: document.write($INPUT)
+    metadata:
+      category: security
+      confidence: MEDIUM
+      cwe: "CWE-79"

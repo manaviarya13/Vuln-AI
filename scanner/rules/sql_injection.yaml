@@ -1,0 +1,36 @@
+rules:
+  - id: vulnai.python.sql-injection
+    languages: [python]
+    mode: taint
+    severity: ERROR
+    message: Potential SQL injection from dynamically constructed SQL. Use parameterized queries.
+    pattern-sources:
+      - pattern: input(...)
+      - pattern: request.args.get(...)
+      - pattern: request.args[...]
+      - pattern: request.form.get(...)
+      - pattern: sys.argv[...]
+    pattern-sinks:
+      - pattern: $CURSOR.execute($QUERY)
+      - pattern: $CURSOR.executemany($QUERY, ...)
+    metadata:
+      category: security
+      confidence: MEDIUM
+      cwe: "CWE-89"
+  - id: vulnai.javascript.sql-injection
+    languages: [javascript, typescript]
+    mode: taint
+    severity: ERROR
+    message: Potential SQL injection from dynamically constructed SQL. Use parameterized queries.
+    pattern-sources:
+      - pattern: $REQUEST.query.$FIELD
+      - pattern: $REQUEST.body.$FIELD
+      - pattern: location.search
+      - pattern: (new URLSearchParams(...)).get(...)
+    pattern-sinks:
+      - pattern: $DB.query($QUERY)
+      - pattern: $DB.execute($QUERY)
+    metadata:
+      category: security
+      confidence: LOW
+      cwe: "CWE-89"
